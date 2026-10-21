@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="430" viewBox="0 0 800 430" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect x="0.5" y="0.5" width="799" height="429" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+  <!-- encabezado del editor -->
+  <text x="24" y="40" font-size="16" fill="#0969da">arbol-pezuk <tspan fill="#59636e">/</tspan> <tspan fill="#1f2328" font-weight="600">datos.js</tspan> <tspan fill="#59636e" font-size="13">in</tspan> <tspan fill="#0969da" font-size="13">main</tspan></text>
+  <rect x="470.5" y="20.5" width="130" height="32" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="535" y="41" font-size="13" fill="#1f2328" text-anchor="middle">Cancel changes</text>
+  <rect x="610.5" y="20.5" width="150" height="32" rx="6" fill="#1f883d" stroke="#1a7f37"/>
+  <text x="685" y="41" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Commit changes...</text>
+  <!-- pestañas -->
+  <rect x="24.5" y="72.5" width="751" height="40" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <rect x="32.5" y="78.5" width="50" height="28" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="57" y="97" font-size="13" font-weight="600" fill="#1f2328" text-anchor="middle">Edit</text>
+  <text x="96" y="97" font-size="13" fill="#59636e">Preview</text>
+  <!-- código -->
+  <rect x="24.5" y="112.5" width="751" height="296" fill="#ffffff" stroke="#d0d7de"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#1f2328">
+    <text x="62" y="140" fill="#8c959f" text-anchor="end">200</text><text x="156" y="140"><tspan fill="#0a3069">"nombre"</tspan>: <tspan fill="#0a3069">"Andrea"</tspan>,</text>
+    <text x="62" y="164" fill="#8c959f" text-anchor="end">201</text><text x="156" y="164"><tspan fill="#0a3069">"hijos"</tspan>: [</text>
+    <text x="62" y="188" fill="#8c959f" text-anchor="end">202</text><text x="172" y="188">{ <tspan fill="#0a3069">"nombre"</tspan>: <tspan fill="#0a3069">"Tiago Kuroski"</tspan> },</text>
+    <text x="62" y="212" fill="#8c959f" text-anchor="end">203</text><text x="172" y="212">{ <tspan fill="#0a3069">"nombre"</tspan>: <tspan fill="#0a3069">"Carla Kuroski"</tspan> }</text>
+    <text x="62" y="236" fill="#8c959f" text-anchor="end">204</text><text x="156" y="236">]</text>
+    <text x="62" y="260" fill="#8c959f" text-anchor="end">205</text><text x="141" y="260">},</text>
+    <rect x="25" y="267" width="750" height="24" fill="#fff8c5"/>
+    <text x="62" y="284" fill="#8c959f" text-anchor="end">206</text><text x="141" y="284">{ <tspan fill="#0a3069">"codigo"</tspan>: <tspan fill="#0a3069">"3.1.5.3"</tspan>, <tspan fill="#0a3069">"nombre"</tspan>: <tspan fill="#0a3069">"<tspan font-weight="700" fill="#1f2328">Mauricio</tspan>"</tspan>, <tspan fill="#0a3069">"nacio"</tspan>: <tspan fill="#0a3069">"12/04/1990"</tspan> }</text>
+    <text x="62" y="308" fill="#8c959f" text-anchor="end">207</text><text x="125" y="308">]</text>
+    <text x="62" y="332" fill="#8c959f" text-anchor="end">208</text><text x="109" y="332">}</text>
+    <text x="62" y="356" fill="#8c959f" text-anchor="end">209</text><text x="94" y="356">]</text>
+    <text x="62" y="380" fill="#8c959f" text-anchor="end">210</text><text x="78" y="380">},</text>
+  </g>
+  <!-- cuadro de búsqueda -->
+  <rect x="430.5" y="122.5" width="330" height="40" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <rect x="440.5" y="130.5" width="190" height="24" rx="4" fill="#ffffff" stroke="#0969da" stroke-width="1.5"/>
+  <text x="450" y="147" font-size="13" fill="#1f2328">Mauricio</text>
+  <text x="642" y="147" font-size="12" fill="#59636e">1 of 2</text>
+  <text x="700" y="148" font-size="14" fill="#59636e">↑  ↓  ✕</text>
+  <!-- marcas -->
+  <rect x="425" y="117" width="341" height="51" rx="9" fill="none" stroke="#cf222e" stroke-width="3"/>
+  <circle cx="410" cy="142" r="16" fill="#cf222e"/><text x="410" y="148" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+  <rect x="487" y="269" width="176" height="20" rx="5" fill="none" stroke="#cf222e" stroke-width="3"/>
+  <circle cx="575" cy="320" r="16" fill="#cf222e"/><text x="575" y="326" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">4</text>
+  <line x1="575" y1="304" x2="575" y2="291" stroke="#cf222e" stroke-width="3"/>
+  <text x="599" y="326" font-size="15" font-weight="700" fill="#cf222e">Hacé el cambio</text>
+  <rect x="605" y="15" width="161" height="43" rx="9" fill="none" stroke="#cf222e" stroke-width="3"/>
+  <circle cx="782" cy="36" r="13" fill="#cf222e"/><text x="782" y="41" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">5</text>
+</svg>

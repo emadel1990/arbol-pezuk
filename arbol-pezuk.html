@@ -1,0 +1,361 @@
+<title>Árbol Genealógico Pezuk</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one calm column, ledger-style branch headings, big tap targets; every person is a row with a yellow code tag like the original chart. */
+:root{
+  --bg:#F2F5F8; --surface:#FFFFFF; --surface-2:#E9EFF5; --ink:#16202A; --muted:#54657A; --line:#C6D1DC;
+  --accent:#1E4D8B; --accent-ink:#FFFFFF; --accent-soft:#DDE8F6;
+  --code-bg:#FFEFB8; --code-ink:#4A3A00; --focus:#C2410C; --hl:#FFF4C2; --ok:#1F7A3E;
+  --f-body:"Atkinson Hyperlegible","Verdana","Segoe UI",system-ui,sans-serif;
+  --f-display:"Libre Caslon Text","Georgia","Times New Roman",serif;
+  --base:24px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F161D; --surface:#1A232D; --surface-2:#232E3A; --ink:#EEF2F6; --muted:#A9B6C3; --line:#34434F;
+  --accent:#8DBCF5; --accent-ink:#0B1A2C; --accent-soft:#223549;
+  --code-bg:#4E4212; --code-ink:#FFE89A; --focus:#FDBA74; --hl:#4A3F12; --ok:#7BD494; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0F161D; --surface:#1A232D; --surface-2:#232E3A; --ink:#EEF2F6; --muted:#A9B6C3; --line:#34434F;
+  --accent:#8DBCF5; --accent-ink:#0B1A2C; --accent-soft:#223549;
+  --code-bg:#4E4212; --code-ink:#FFE89A; --focus:#FDBA74; --hl:#4A3F12; --ok:#7BD494; color-scheme:dark }
+
+html{font-size:var(--base)}
+@media (max-width:640px){ html{--base:20px} }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.5;font-size:1rem;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 4rem}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:58rem;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
+a{color:var(--accent)}
+
+/* Sticky toolbar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:2px solid var(--line);
+  margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px))) 0 calc(-1*max(16px,env(safe-area-inset-right,0px)));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:.5rem}
+.top .wrap{display:flex;flex-wrap:wrap;gap:.5rem .75rem;align-items:center}
+.top h1{font-size:1.15rem;flex:1 1 12rem;min-width:0}
+.top h1 small{display:block;font-family:var(--f-body);font-size:.6rem;color:var(--muted);font-weight:400}
+.sizer{display:flex;gap:.35rem;align-items:center}
+.sizer button{min-width:3rem;height:2.6rem;border:2px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:.5rem;cursor:pointer;font-weight:700;padding:0 .6rem;line-height:1}
+.sizer button:hover{background:var(--accent-soft)}
+.sizer .big{font-size:1.3rem}
+.sizer .small{font-size:.8rem}
+.search{flex:1 1 100%;position:relative}
+.search input{width:100%;height:2.8rem;font-size:1rem;padding:0 .7rem 0 .7rem;border:2px solid var(--line);border-radius:.6rem;background:var(--surface);color:var(--ink)}
+.search input:focus{border-color:var(--accent)}
+.results{position:absolute;left:0;right:0;top:calc(100% + .3rem);background:var(--surface);border:2px solid var(--accent);border-radius:.6rem;max-height:60vh;overflow:auto;box-shadow:0 .5rem 1.5rem rgba(0,0,0,.18);z-index:20}
+.results .r{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:.6rem .7rem;cursor:pointer}
+.results .r:hover,.results .r:focus{background:var(--accent-soft)}
+.results .r b{display:block}
+.results .r span{color:var(--muted);font-size:.8rem}
+.results .none{padding:.7rem;color:var(--muted)}
+
+/* Sections */
+section{margin-top:1.4rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:.8rem;padding:1rem 1.1rem}
+.card h2{font-size:1.3rem;margin-bottom:.5rem}
+.howto ol{margin:.3rem 0 0;padding-left:1.4rem}
+.howto li{margin:.35rem 0}
+.howto .k{display:inline-block;background:var(--code-bg);color:var(--code-ink);font-weight:700;padding:0 .4rem;border-radius:.3rem;font-variant-numeric:tabular-nums}
+.actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.9rem}
+.btn{height:2.8rem;padding:0 1rem;border-radius:.6rem;border:2px solid var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+.btn.ghost{background:var(--surface);color:var(--accent)}
+.btn:hover{filter:brightness(1.08)}
+
+/* Founders */
+.founders{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.6rem}
+@media (max-width:640px){.founders{grid-template-columns:1fr}}
+.founder{border:2px solid var(--accent);border-radius:.7rem;padding:.8rem .9rem;background:var(--surface)}
+.founder h3{font-size:1.25rem}
+.founder .d{color:var(--muted);font-size:.85rem;margin-top:.2rem}
+.founder p{margin:.5rem 0 0;font-size:.9rem}
+.story{margin-top:1rem;padding:.9rem 1rem;background:var(--accent-soft);border-radius:.7rem;font-size:.95rem}
+.story p{margin:.4rem 0}
+.sib{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.4rem}
+.sib span{background:var(--surface);border:1px solid var(--line);border-radius:.4rem;padding:.1rem .5rem;font-size:.85rem}
+
+/* Branch index */
+.index{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.6rem;margin-top:.6rem}
+.index a{display:flex;gap:.6rem;align-items:center;text-decoration:none;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:.7rem;padding:.6rem .7rem;min-height:3.4rem}
+.index a:hover{border-color:var(--accent);background:var(--accent-soft)}
+.index .n{font-family:var(--f-display);font-size:1.5rem;color:var(--accent);min-width:2rem;text-align:center;font-variant-numeric:tabular-nums}
+.index .t{font-size:.9rem;line-height:1.25}
+.index .t small{display:block;color:var(--muted);font-size:.75rem}
+
+/* Branches */
+.rama{background:var(--surface);border:2px solid var(--line);border-radius:.9rem;margin-top:1rem;scroll-margin-top:7rem}
+.rama[open]{border-color:var(--accent)}
+.rama summary{list-style:none;cursor:pointer;display:flex;gap:.8rem;align-items:center;padding:.9rem 1rem;min-height:4rem}
+.rama summary::-webkit-details-marker{display:none}
+.rama summary .n{font-family:var(--f-display);font-size:2rem;color:var(--accent);min-width:2.6rem;text-align:center;line-height:1;font-variant-numeric:tabular-nums}
+.rama summary .t{flex:1;min-width:0}
+.rama summary h2{font-size:1.3rem}
+.rama summary .meta{color:var(--muted);font-size:.8rem;margin-top:.15rem}
+.rama summary .arrow{font-size:.8rem;color:var(--accent);font-weight:700;white-space:nowrap;border:2px solid var(--accent);border-radius:.5rem;padding:.3rem .6rem}
+.rama[open] summary .arrow .o{display:none}
+.rama:not([open]) summary .arrow .c{display:none}
+.rama .body{padding:.2rem 1rem 1rem;border-top:1px solid var(--line)}
+.rama .body > .per{margin-top:.6rem}
+
+/* People */
+.per{scroll-margin-top:8rem}
+.row{display:flex;gap:.6rem;align-items:flex-start;padding:.45rem .5rem;border-radius:.5rem;position:relative}
+.row.hl{background:var(--hl);box-shadow:0 0 0 3px var(--focus) inset}
+.code{flex:none;background:var(--code-bg);color:var(--code-ink);font-weight:700;padding:.05rem .45rem;border-radius:.35rem;font-size:.85rem;font-variant-numeric:tabular-nums;margin-top:.2rem;min-width:2.2rem;text-align:center}
+.code.none{background:var(--surface-2);color:var(--muted);font-weight:400}
+.who{flex:1;min-width:0}
+.who .nm{font-weight:700}
+.who .sp{font-weight:400}
+.who .sp::before{content:" y "}
+.dates{color:var(--muted);font-size:.8rem;margin-top:.1rem}
+.dates span{display:inline-block;margin-right:.7rem}
+.note{font-size:.8rem;color:var(--muted);font-style:italic}
+.fix{flex:none;height:2.2rem;padding:0 .6rem;border-radius:.5rem;border:2px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer;font-size:.75rem;font-weight:700}
+.fix:hover{border-color:var(--accent);color:var(--accent)}
+.kids{margin-left:1.1rem;padding-left:.9rem;border-left:3px solid var(--line);margin-top:.15rem;margin-bottom:.4rem}
+.kids-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:.3rem 0 .1rem .5rem;font-weight:700}
+.per[data-gen="0"] > .row .nm{font-size:1.1rem}
+.per[data-gen="0"] > .kids{border-left-color:var(--accent)}
+
+/* Correction panel */
+.fixpanel{margin:.3rem 0 .6rem 2.8rem;background:var(--surface-2);border:2px solid var(--accent);border-radius:.7rem;padding:.8rem}
+.fixpanel label{display:block;font-weight:700;margin-bottom:.3rem}
+.fixpanel textarea{width:100%;min-height:6rem;font:inherit;font-size:.95rem;padding:.5rem;border:2px solid var(--line);border-radius:.5rem;background:var(--surface);color:var(--ink);resize:vertical}
+.fixpanel .contact{font-size:.85rem;color:var(--muted);margin-top:.5rem}
+.fixpanel .contact b{color:var(--ink);user-select:all}
+.toast{position:fixed;left:50%;bottom:calc(1.5rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.7rem 1.1rem;border-radius:.6rem;font-weight:700;z-index:30;box-shadow:0 .5rem 1.2rem rgba(0,0,0,.25)}
+
+.contactbox{margin-top:1.4rem}
+.contactbox p{margin:.3rem 0}
+.contactbox .big{font-size:1.1rem;font-weight:700;user-select:all;word-break:break-all}
+footer{margin-top:2rem;color:var(--muted);font-size:.8rem;text-align:center}
+
+@media (prefers-reduced-motion:no-preference){ .row{transition:background .3s} }
+@media print{
+  html{--base:16px}
+  .rama summary .arrow,footer{display:none}
+  .howto{display:none}
+  .top .sizer,.search,.actions,.fix,.fixpanel,.index{display:none!important}
+  .top{position:static;border:0}
+  .rama{break-inside:auto;border-color:#999}
+  .per{break-inside:avoid}
+  body{background:#fff;color:#000}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <h1>Árbol Genealógico Pezuk <small>Descendientes de Miguel Pezuk y Maria Zsavaga · Última versión: <span id="ver"></span></small></h1>
+    <div class="sizer" role="group" aria-label="Tamaño de letra">
+      <button type="button" id="smaller" class="small" aria-label="Letra más chica" title="Letra más chica">A−</button>
+      <button type="button" id="bigger" class="big" aria-label="Letra más grande" title="Letra más grande">A+</button>
+    </div>
+    <div class="search">
+      <input type="search" id="q" placeholder="Buscar una persona por nombre…" autocomplete="off" aria-label="Buscar una persona">
+      <div class="results" id="results" hidden></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section class="card howto">
+  <h2>Cómo usar este árbol</h2>
+  <ol>
+    <li><b>Para agrandar la letra</b>, toque el botón <b>A+</b> de arriba las veces que necesite.</li>
+    <li><b>Para buscar a alguien</b>, escriba su nombre en el cuadro de búsqueda y toque el resultado.</li>
+    <li><b>Para ver una rama</b>, toque el recuadro de uno de los 12 hijos de Miguel y Maria. Se abre la lista completa de esa familia.</li>
+    <li>Cada persona tiene un <b>código</b>, por ejemplo <span class="k">3.1.5.3</span>: Mauricio, hijo de Ruben (3.1.5), nieto de Juan (3.1), bisnieto de Matias (3), tataranieto de Miguel.</li>
+    <li><b>Si falta algún dato o hay un error</b>, toque el botón <b>Corregir</b> al lado de la persona y mande el mensaje a Mauricio.</li>
+  </ol>
+  <div class="actions">
+    <button type="button" class="btn" id="openall">Abrir todas las ramas</button>
+    <button type="button" class="btn ghost" id="closeall">Cerrar todas las ramas</button>
+  </div>
+</section>
+
+<section class="card" id="fundadores">
+  <h2>Los que llegaron: Miguel y Maria</h2>
+  <div class="founders" id="founders"></div>
+  <div class="story" id="story"></div>
+</section>
+
+<section>
+  <h2 style="font-size:1.3rem;margin-top:.4rem">Las 12 ramas: los hijos de Miguel y Maria</h2>
+  <p style="color:var(--muted);margin:.3rem 0 0;font-size:.9rem">Toque un nombre para ir a esa rama.</p>
+  <div class="index" id="index"></div>
+</section>
+
+<section id="ramas"></section>
+
+<section class="card contactbox" id="contacto">
+  <h2>Para corregir o agregar datos</h2>
+  <p>Este árbol lo mantiene <b>Mauricio Pezuk</b>. Indique siempre el <b>código</b> o el nombre de la persona y la rama.</p>
+  <p>Correo: <span class="big" id="mail"></span></p>
+  <p>Teléfono / WhatsApp: <span class="big" id="tel"></span></p>
+  <div class="actions">
+    <a class="btn" id="walink" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    <a class="btn ghost" id="maillink">Escribir por correo</a>
+  </div>
+</section>
+
+<footer>Este enlace muestra siempre la última versión del árbol. Si alguien le reenvió una copia vieja en PDF, use este enlace.</footer>
+</div>
+
+<script>
+const DATA = {"version":"20/10/2026","contacto":{"email":"MAURICIOPEZUK@GMAIL.COM","telefono":"3758401881"},"fundadores":{"el":{"name":"Miguel Pezuk","birth":"1874","death":"1946","padres":"Esteban Pezuk y Rosalia Zarkievicz","edad":"27 años al emigrar"},"ella":{"name":"Maria Zsavaga","birth":"1878","death":"1952","padres":"Juan Zsavaga (☆ 1844) y Anastacia Harazymczuk (☆ 1854)","abuelos":"Demetrio Zsavaga y Elena Peryuga","edad":"23 años al emigrar","hermanos":[["Terem","13 años"],["Tymko","11 años"],["Oleska","9 años"],["Dokya","5 años"],["Andrej","3 años"]]},"viaje":"Todos emigraron en el vapor \"Mark\", que partió de Bremen, Alemania, el 25/05/1901 y llegó al puerto de Buenos Aires el 23/06/1901. Miguel vino con otros Pezuk (al parecer primos), y Maria con sus padres y hermanos.","juan":"En el registro del viaje, Juan Pezuk (34 años) y Ana ? de Pezuk (31 años), con sus hijos Andres (4 años) y Maria (1 año), aparecen anotados junto con Miguel como una única familia Pezuk. Por eso se cree que Juan tiene algún grado de parentesco con Miguel."},"ramas":[{"code":"1","name":"Juan Feyeca","spouse":"","birth":"14/07/1901","death":"","sbirth":"","sdeath":"","children":[{"code":"1.1","name":"Miguel Feyeca","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Marta?","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"1.2","name":"Pedro Feyeca","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"1.3","name":"Miguela Feyeca (Monja)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"1.4","name":"Marta Feyeca","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"1.5","name":"Juan/Alejandro Feyeca","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"1.6","name":"Carlos Feyeca","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"1.7","name":"Carmen Feyeca","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":["Tuvo 2 esposas"]},{"code":"2","name":"Ana Pezuk","spouse":"Antonio Statkievich","birth":"4/9/1902","death":"?","sbirth":"","sdeath":"?","children":[{"code":"","name":"? (sin nombre)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"? (sin nombre)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"? (sin nombre)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3","name":"Matias Pezuk","spouse":"Ana Nazadek","birth":"30/11/1903","death":"27/07/1980","sbirth":"1904","sdeath":"1978?","children":[{"code":"3.1","name":"Juan Pezuk","spouse":"Julia Mijaloski","birth":"1/04/1927","death":"23/07/2013","sbirth":"20/07/1929","sdeath":"23/04/2002","children":[{"code":"3.1.1","name":"Roberto Pezuk","spouse":"Pocha Grabovieski","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.1.1.1","name":"Ariel Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Sofia Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.1.2","name":"Adriana Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Favio Angel Leiva Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Ramiro Curipan Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Roberto Curipan Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.1.3","name":"Ana Maria","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Camila Victoria Escalante","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Mateo Escalante","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]},{"code":"3.1.2","name":"Ernesto Pezuk","spouse":"Nelly Saporitti","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.1.2.1","name":"Matias Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.1.2.2","name":"Julia Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Manuela Negrao Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Victoria Negrao Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.2.3","name":"Andres Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Marcel Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Albin Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.2.4","name":"Belen Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Pedro Morando","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Emilio Morando","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]},{"code":"3.1.3","name":"Norma Pezuk","spouse":"Carlos Terlecki","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.1.3.1","name":"Lisandro","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.1.3.2","name":"Yohana","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Bebé","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Delfina","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]},{"code":"3.1.4","name":"Dora Pezuk","spouse":"Antonio Sanchez","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.1.4.1","name":"Mariana","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Guadalupe","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.4.2","name":"Antonella","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.1.4.3","name":"Yamila","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Lautaro","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.4.4","name":"Agustina","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.1.4.5","name":"Melanie","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"3.1.5","name":"Ruben Pezuk","spouse":"Juliana Dlutowski","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.1.5.1","name":"Pamela","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Florenciana Lopez Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Josefina Lopez Pezuk","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.5.2","name":"Andrea","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Tiago Kuroski","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Carla Kuroski","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.1.5.3","name":"Mauricio","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"3.2","name":"Basilio Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.2.1","name":"Ignacio Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.2.2","name":"Rafael Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.2.3","name":"Miguel Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.2.4","name":"Oscar Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.2.5","name":"Isabel Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.2.6","name":"Marta Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.2.7","name":"Juliana Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.2.8","name":"Felipe Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"3.3","name":"Emilio Pezuk","spouse":"Rosa Staciuk","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.3.1","name":"Raul Pezuk","spouse":"Estela Povarchuk","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.3.1.2","name":"Milko","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.3.1.3","name":"Zeus","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.3.1.4","name":"Leandro","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.3.1.5","name":"Martin","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"3.3.2","name":"Angel Pezuk","spouse":"Isabel Boyko","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.3.2.1","name":"Alejandro","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.3.2.2","name":"Natalia","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Delfina","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Guillermina","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Justina","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]},{"code":"3.3.3","name":"Belcha Pezuk","spouse":"Daniluk","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.3.3.1","name":"Varón 1","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.3.3.2","name":"Varón 2","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.3.3.3","name":"Laura","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Varón 1","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Varón 2","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]},{"code":"3.3.4","name":"Mary Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"3.4","name":"Elias Pezuk","spouse":"Julia Fassa","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.4.1","name":"Abel Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Antonella","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Micaela","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Daiana","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Gabriel","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Christian","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.4.2","name":"Jorge Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Yesica","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Pamela","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Nancy","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.4.3","name":"Margarita Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Omar","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Sergio","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Noelia","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Gabriela","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.4.4","name":"Teresa Pezuk","spouse":"Huk?","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Cristian","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.4.5","name":"Angela Pezuk","spouse":"Maruñak","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Mariana","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Daniela","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"German","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Mirella","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Nicolas","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.4.6","name":"Miguel Angel Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"3.5","name":"Veronica Pezuk","spouse":"Juan Chijanoski","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.5.1","name":"Luisa","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.5.2","name":"Jorge","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.5.3","name":"Delia","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.5.4","name":"Hector","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.5.5","name":"Federico","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"3.5.5.1","name":"Veronica","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"3.5.5.2","name":"Natalia","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Nena (niña)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.5.5.3","name":"Guillermo","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Nena (niña)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"3.5.5.4","name":"Daniel","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"3.5.6","name":"Milton","spouse":"Katty Doretto","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Varón 1","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Varón 2","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]}],"notes":[]},{"code":"4","name":"Basilio Piyuka","spouse":"Ana Zanek","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"4.1","name":"Miguel Piyuka","spouse":"Maria Ramirez Pisani","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"4.1.1","name":"Ana Maria Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.1.2","name":"Stella Maris Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.1.3","name":"Miguel Dario Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.1.4","name":"Tamara Elizabeth Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.1.5","name":"Sonia Karen Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.1.6","name":"Gisela Natacha Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.1.7","name":"Tatiana Eugenia Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.1.8","name":"Juan Demetrio","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"4.2","name":"Mariano Piyuka","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.3","name":"Isabel Piyuka","spouse":"Cito Farinola","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"4.3.1","name":"Graciela Cecilia Farinola","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.3.2","name":"Cristian Farinola","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"4.4","name":"Pedro Angel Piyuka","spouse":"Lucia Infuleki","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"4.4.1","name":"Barbara Piyuka","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.4.2","name":"Adriana Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"4.4.3","name":"Samanta Piyuka","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"5","name":"Catarina Pezuk","spouse":"Sitio Farinola","birth":"24/07/1908","death":"","sbirth":"","sdeath":"","children":[{"code":"5.1","name":"Karina","spouse":"Cristian Luvacheski","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"5.1.1","name":"Melliza 1 (sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"5.1.2","name":"Melliza 2 (sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"5.1.3","name":"? (sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"5.2","name":"Cecilia","spouse":"Holowaty","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"5.2.1","name":"(sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"5.2.2","name":"(sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"5.3","name":"Graciela","spouse":"Dalmiron Adaro","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"5.3.1","name":"Roberto","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"5.3.2","name":"Yamila","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"5.3.3","name":"Luciano","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"5.3.4","name":"? (sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":["o Piyuka?"]},{"code":"6","name":"Sofia Pezuk","spouse":"Miguel Kruk","birth":"17/07/1911","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"(sin Datos)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"(sin Datos)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"(sin Datos)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"7","name":"Nicolas Pezuk","spouse":"Miguelina Dowin","birth":"14/04/1913","death":"","sbirth":"","sdeath":"","children":[{"code":"7.1","name":"Juan","spouse":"Lidia Snihur","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"7.1.1","name":"David Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"7.2","name":"Nencho Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"7.3","name":"Jose Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"7.4","name":"Maria Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"7.5","name":"Paulina Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"7.6","name":"Pedro Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"7.6.1","name":"Irma Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"(sin Nombre)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"(sin Nombre)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"(sin Nombre)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"7.6.2","name":"Patricia Pezuk","spouse":"Poterala","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"7.6.2.1","name":"Lucas Poterala","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Nena 1","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Nena 2","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"7.6.2.2","name":"Ludmila Poterala","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"7.6.3","name":"Dario Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"(sin Nombre)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"7.6.4","name":"Oscar Pezuk","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"7.6.4.1","name":"Pamela Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"7.6.4.2","name":"Cristian Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"7.6.4.3","name":"Nicolas Pezuk","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]}],"notes":[]},{"code":"8","name":"Demetrio Peyuk","spouse":"Barbara Semaiko","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.1","name":"Maria","spouse":"Juan Makusen","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.1.1","name":"Roberto","spouse":"Margarita Didolich?","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.1.1.1","name":"Mariano","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.1.1.2","name":"Adriana","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Emiliano","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"8.1.1.3","name":"Adrian","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Abril","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Ana Maria","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]},{"code":"8.1.2","name":"Mariano","spouse":"Chita Ozaryn","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.1.2.1","name":"Monchi (juan Ramon)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"8.1.3","name":"Eduardo","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.1.3.1","name":"Patricia","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.1.3.2","name":"Nicolas","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"8.2","name":"Rosa","spouse":"Melnechuk","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.2.1","name":"Beatriz","spouse":"Duran","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.2.1.1","name":"Soledad","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.2.1.2","name":"Marcelo","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"8.2.2","name":"Norma","spouse":"Rogelio Belonoz","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.2.2.1","name":"Alejandro","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.2.2.2","name":"Lorena","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Anibal","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]}],"notes":[]},{"code":"8.2.3","name":"Patricia","spouse":"Atamañuk?","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.2.3.1","name":"Cristian","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"8.3","name":"Ana","spouse":"Hawresz","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.3.1","name":"Alejandra","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.3.1.1","name":"Valentina","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"8.4","name":"Anastacia","spouse":"Roberto Subriski","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.4.1","name":"Carmen","spouse":"Grivetto","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.4.2","name":"Daniel","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.4.2.1","name":"Piro","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.4.2.2","name":"Agustin","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.4.2.3","name":"Micaela","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"8.5","name":"Paulina","spouse":"Mariano Kobach","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.5.1","name":"Mario","spouse":"Susana Kuzuk","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.5.1.1","name":"Marisa","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.5.1.2","name":"Maria","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"8.5.2","name":"Hugo","spouse":"Erica","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.5.2.1","name":"Macarena","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.5.2.2","name":"Magali","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"8.6","name":"Nicanor Pezuk","spouse":"Veronica Zacarhemeny","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.6.1","name":"Ernesto","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.6.2","name":"Alicia","spouse":"Atamañuk","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.6.2.1","name":"Talia","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.6.2.2","name":"Lisandro","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"8.6.3","name":"Jorge","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.6.4","name":"Rosana","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.6.5","name":"Mariela","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.6.5.1","name":"Pedro","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"8.6.5.2","name":"Gael","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"8.7","name":"Dora","spouse":"Quique Melo","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"8.7.1","name":"Silvia","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"9","name":"Jose Pezuk","spouse":"Catalina Ozarcyn","birth":"15/11/1918","death":"","sbirth":"","sdeath":"","children":[{"code":"9.1","name":"Basilio","spouse":"Aurora Estela Kuok","birth":"1948","death":"2021","sbirth":"1950","sdeath":"","children":[{"code":"9.1.1","name":"Maria Noel","spouse":"Igoa / Orrego","birth":"1985","death":"","sbirth":"","sdeath":"","children":[{"code":"9.1.1.1","name":"Gaston Igoa","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"9.1.1.2","name":"Nazario Igoa","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Nerea","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"9.1.1.3","name":"Catarina Orrego","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"9.1.1.4","name":"Ariana Orrego","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"9.1.1.5","name":"Ivan Orrego","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"9.1.2","name":"Ana Mariel","spouse":"","birth":"1986","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"9.1.3","name":"Leonardo Miguel","spouse":"","birth":"1987","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"9.2","name":"Juan","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":["Fallecido"]},{"code":"9.3","name":"Julia","spouse":"Rodolfo Manulak","birth":"","death":"2/03/2024","sbirth":"","sdeath":"","children":[{"code":"9.3.1","name":"Juan Alberto","spouse":"Mariana Limas","birth":"1980","death":"","sbirth":"1980","sdeath":"","children":[{"code":"9.3.1.1","name":"Milagros Agustina","spouse":"","birth":"2008","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"9.3.1.2","name":"Micaela Lucila","spouse":"","birth":"2013","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]}],"notes":[]},{"code":"10","name":"Teresa Pezuk","spouse":"Luis Bonino","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"10.1","name":"Luis Santiago Bonino","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"10.2","name":"Dora Esther Bonino","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"10.2.1","name":"Jorge","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"10.2.2","name":"Mirtha","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"10.3","name":"Teresa Bonino","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"10.4","name":"Pedro Jose Bonino","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"11","name":"Esteban Pezuk","spouse":"Maria Glinka","birth":"12/04/1921","death":"","sbirth":"","sdeath":"","children":[{"code":"11.1","name":"Teresa","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.2","name":"Juana","spouse":"Alcario","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"11.2.1","name":"Gabriela","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.2.2","name":"Gisel","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.2.3","name":"Mujer (sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"11.3","name":"Eduardo","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.4","name":"Rogelio","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.5","name":"Pedro","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.6","name":"Victor","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.7","name":"Miguel","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.8","name":"Clara","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.9","name":"Mariano","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"11.9.1","name":"Ivana","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"11.9.2","name":"Manuel","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]},{"code":"12","name":"Paulina Pezuk","spouse":"Juan Babi","birth":"01/07/1923","death":"","sbirth":"","sdeath":"","children":[{"code":"12.1","name":"Jorge Babi","spouse":"Cata","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.1.1","name":"Nerea","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.1.2","name":"David","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.2","name":"Veronica Babi","spouse":"Matijak","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.2.1","name":"Mariano","spouse":"Elsa","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"","name":"Mariana","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Nena (niña)","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""},{"code":"","name":"Varón","spouse":"","birth":"","death":"","children":[],"notes":[],"sbirth":"","sdeath":""}],"notes":[]},{"code":"12.2.2","name":"Mujer (sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.3","name":"Cacho Babi","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.4","name":"Carlos Babi","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.5","name":"Norma Babi","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.5.1","name":"Contador","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.5.2","name":"Bioquimico","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.6","name":"Estela Babi","spouse":"Noguera","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.6.1","name":"Melisa Noguera","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.6.2","name":"Antonela Noguera","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.7","name":"Bety Babi","spouse":"Regalado?","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.7.1","name":"Lujan (bar Español)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.7.2","name":"Seguridad Shopping","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.7.3","name":"Gimnasio","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.8","name":"Carmen Babi","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.9","name":"Pedro","spouse":"Rosa Kubizin","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.9.1","name":"Viviana","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.9.2","name":"Mujer (sin nombre)","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.9.3","name":"Gustavo","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.10","name":"Mariano","spouse":"Dora Gonzalez","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.10.1","name":"Horacio","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.10.2","name":"Carlos","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.10.3","name":"Alberto","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.11","name":"Pablo Babi","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.11.1","name":"Cirujana Plastica","spouse":"","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]},{"code":"12.12","name":"Eduardo Babi","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.13","name":"Margarita Babi","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[{"code":"12.13.1","name":"Romina","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]},{"code":"12.13.2","name":"Juan Jose","spouse":"? (nombre desconocido)","birth":"","death":"","sbirth":"","sdeath":"","children":[],"notes":[]}],"notes":[]}],"notes":[]}]};
+</script>
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  document.getElementById('ver').textContent=DATA.version;
+
+  /* ---- text size ---- */
+  const SIZES=[18,20,22,24,27,30,34,38,44];
+  const phone=matchMedia('(max-width:640px)').matches;
+  let si=SIZES.indexOf(phone?20:24);
+  try{const s=parseInt(localStorage.getItem('pezuk-size'));if(SIZES.includes(s))si=SIZES.indexOf(s);}catch(e){}
+  function applySize(){document.documentElement.style.setProperty('--base',SIZES[si]+'px');try{localStorage.setItem('pezuk-size',SIZES[si])}catch(e){}}
+  applySize();
+  $('#bigger').onclick=()=>{if(si<SIZES.length-1){si++;applySize();}};
+  $('#smaller').onclick=()=>{if(si>0){si--;applySize();}};
+
+  /* ---- founders ---- */
+  const F=DATA.fundadores;
+  $('#founders').innerHTML=`
+    <div class="founder"><h3>${esc(F.el.name)}</h3><div class="d">☆ Nació en ${esc(F.el.birth)} · † Falleció en ${esc(F.el.death)}</div>
+      <p>Hijo de <b>${esc(F.el.padres)}</b>.</p><p>Tenía ${esc(F.el.edad)}.</p></div>
+    <div class="founder"><h3>${esc(F.ella.name)}</h3><div class="d">☆ Nació en ${esc(F.ella.birth)} · † Falleció en ${esc(F.ella.death)}</div>
+      <p>Hija de <b>${esc(F.ella.padres)}</b>; nieta de ${esc(F.ella.abuelos)}.</p><p>Tenía ${esc(F.ella.edad)}. Viajó con sus hermanos:</p>
+      <div class="sib">${F.ella.hermanos.map(h=>`<span>${esc(h[0])} (${esc(h[1])})</span>`).join('')}</div></div>`;
+  $('#story').innerHTML=`<p><b>El viaje.</b> ${esc(F.viaje)}</p><p><b>Otros Pezuk en el barco.</b> ${esc(F.juan)}</p>`;
+
+  /* ---- people ---- */
+  const GEN=['hijo/a','nieto/a','bisnieto/a','tataranieto/a','chozno/a','bichozno/a'];
+  const all=[]; // flat index for search
+  function count(p){return 1+p.children.reduce((a,c)=>a+count(c),0)}
+  function idFor(p,parentId,i){return p.code?('p-'+p.code.replace(/\./g,'-')):(parentId+'-x'+i)}
+  function datesHtml(p){
+    const out=[];
+    if(p.birth)out.push(`<span>☆ Nació ${esc(p.birth)}</span>`);
+    if(p.death)out.push(`<span>† Falleció ${esc(p.death)}</span>`);
+    if(p.spouse&&(p.sbirth||p.sdeath)){
+      const s=[];if(p.sbirth)s.push('☆ '+esc(p.sbirth));if(p.sdeath)s.push('† '+esc(p.sdeath));
+      out.push(`<span>${esc(p.spouse.split(' ')[0])}: ${s.join(' · ')}</span>`);
+    }
+    return out.length?`<div class="dates">${out.join('')}</div>`:'';
+  }
+  function render(p,gen,path,parentId,i,branch){
+    const id=idFor(p,parentId,i);
+    const first=p.name.split(' ')[0];
+    const myPath=path.concat([{name:p.name,code:p.code}]);
+    all.push({p,id,gen,path:myPath,branch});
+    let h=`<div class="per" id="${id}" data-gen="${gen}">
+      <div class="row">
+        <span class="code${p.code?'':' none'}">${p.code?esc(p.code):'·'}</span>
+        <div class="who"><span class="nm">${esc(p.name)}</span>${p.spouse?`<span class="sp">${esc(p.spouse)}</span>`:''}
+          ${datesHtml(p)}${p.notes&&p.notes.length?`<div class="note">${esc(p.notes.join(' · '))}</div>`:''}</div>
+        <button type="button" class="fix" data-id="${id}" aria-label="Corregir datos de ${esc(p.name)}">Corregir</button>
+      </div>`;
+    if(p.children.length){
+      h+=`<div class="kids"><div class="kids-label">Hijos de ${esc(first)}</div>`+
+        p.children.map((c,j)=>render(c,gen+1,myPath,id,j,branch)).join('')+`</div>`;
+    }
+    return h+`</div>`;
+  }
+  const idx=[],ramas=[];
+  DATA.ramas.forEach((r,ri)=>{
+    const n=count(r)-1;
+    const title=`${esc(r.name)}${r.spouse?` y ${esc(r.spouse)}`:''}`;
+    idx.push(`<a href="#rama-${r.code}" data-rama="${r.code}"><span class="n">${r.code}</span><span class="t">${title}<small>${n?n+' descendientes anotados':'sin descendientes anotados'}</small></span></a>`);
+    const dates=[];if(r.birth)dates.push('☆ '+esc(r.birth));if(r.death)dates.push('† '+esc(r.death));
+    ramas.push(`<details class="rama" id="rama-${r.code}">
+      <summary><span class="n">${r.code}</span><span class="t"><h2>${title}</h2><div class="meta">${dates.join(' · ')}${dates.length&&n?' · ':''}${n?n+' descendientes':''}${r.notes&&r.notes.length?' · '+esc(r.notes.join(' · ')):''}</div></span>
+      <span class="arrow"><span class="o">Ver ▾</span><span class="c">Cerrar ▴</span></span></summary>
+      <div class="body">${r.children.length?`<div class="kids-label" style="margin-left:0">Hijos de ${esc(r.name.split(' ')[0])}${r.spouse?' y '+esc(r.spouse.split(' ')[0]):''}</div>`+r.children.map((c,j)=>render(c,0,[{name:r.name,code:r.code}],'rama-'+r.code,j,r)).join(''):'<p style="color:var(--muted)">Todavía no hay descendientes anotados en esta rama.</p>'}</div>
+    </details>`);
+  });
+  $('#index').innerHTML=idx.join('');
+  $('#ramas').innerHTML=ramas.join('');
+
+  /* ---- navigation ---- */
+  function goto(id){
+    const el=document.getElementById(id); if(!el)return;
+    const d=el.closest('details'); if(d)d.open=true;
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    const row=el.classList.contains('per')?el.querySelector(':scope > .row'):null;
+    if(row){row.classList.add('hl');setTimeout(()=>row.classList.remove('hl'),4000);}
+  }
+  document.querySelectorAll('.index a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const d=$('#rama-'+a.dataset.rama);d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'});}));
+  $('#openall').onclick=()=>document.querySelectorAll('.rama').forEach(d=>d.open=true);
+  $('#closeall').onclick=()=>document.querySelectorAll('.rama').forEach(d=>d.open=false);
+  function fromHash(){const h=(location.hash||'').slice(1);if(h==='imprimir'){document.querySelectorAll('.rama').forEach(d=>d.open=true);return;}if(h)goto(h);}
+  fromHash(); addEventListener('hashchange',fromHash);
+
+  /* ---- search ---- */
+  const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+  const q=$('#q'),res=$('#results');
+  function relation(e){
+    // e.path: [rama root, ..., person]; describe like the original: hijo de X, nieto de Y, bisnieto de Z, ... de Miguel
+    const anc=e.path.slice(0,-1).reverse(); // nearest first
+    const parts=anc.map((a,i)=>`${GEN[i]||'descendiente'} de ${a.name.split(' ')[0]}`);
+    parts.push(`${GEN[anc.length]||'descendiente'} de Miguel y Maria`);
+    return parts.join(', ');
+  }
+  q.addEventListener('input',()=>{
+    const v=norm(q.value.trim());
+    if(v.length<2){res.hidden=true;res.innerHTML='';return;}
+    const hits=all.filter(e=>norm(e.p.name+' '+(e.p.spouse||'')+' '+e.p.code).includes(v)).slice(0,40);
+    res.innerHTML=hits.length?hits.map(e=>`<button type="button" class="r" data-id="${e.id}"><b>${e.p.code?`<span class="code">${esc(e.p.code)}</span> `:''}${esc(e.p.name)}${e.p.spouse?' y '+esc(e.p.spouse):''}</b><span>Rama ${e.branch.code} · ${esc(relation(e))}</span></button>`).join('')
+      :`<div class="none">No se encontró a nadie con ese nombre. Pruebe con menos letras.</div>`;
+    res.hidden=false;
+  });
+  res.addEventListener('click',e=>{const b=e.target.closest('.r');if(!b)return;res.hidden=true;goto(b.dataset.id);});
+  document.addEventListener('click',e=>{if(!e.target.closest('.search'))res.hidden=true;});
+  q.addEventListener('focus',()=>{if(res.innerHTML)res.hidden=false;});
+
+  /* ---- corrections ---- */
+  const C=DATA.contacto; const tel=C.telefono.replace(/\D/g,''); const wa='549'+tel;
+  $('#mail').textContent=C.email.toLowerCase(); $('#tel').textContent=C.telefono;
+  $('#walink').href='https://wa.me/'+wa+'?text='+encodeURIComponent('Hola Mauricio, tengo un dato para el árbol genealógico Pezuk: ');
+  $('#maillink').href='mailto:'+C.email.toLowerCase()+'?subject='+encodeURIComponent('Árbol genealógico Pezuk');
+  function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2200);}
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('.fix'); if(!b)return;
+    const entry=all.find(x=>x.id===b.dataset.id); if(!entry)return;
+    const per=document.getElementById(entry.id);
+    const existing=per.querySelector(':scope > .fixpanel');
+    if(existing){existing.remove();return;}
+    const who=`${entry.p.name}${entry.p.spouse?' y '+entry.p.spouse:''}`;
+    const ref=entry.p.code?`código ${entry.p.code}`:`rama ${entry.branch.code}, ${relation(entry)}`;
+    const text=`Corrección para el árbol Pezuk – ${ref} (${who}):\n`;
+    const panel=document.createElement('div'); panel.className='fixpanel';
+    panel.innerHTML=`<label for="t-${entry.id}">Escriba aquí el dato correcto o lo que falta:</label>
+      <textarea id="t-${entry.id}">${esc(text)}</textarea>
+      <div class="actions">
+        <a class="btn" target="_blank" rel="noopener" data-wa>Enviar por WhatsApp</a>
+        <a class="btn ghost" data-mail>Enviar por correo</a>
+        <button type="button" class="btn ghost" data-copy>Copiar el texto</button>
+        <button type="button" class="btn ghost" data-close>Cerrar</button>
+      </div>
+      <div class="contact">Si los botones no abren nada, copie el texto y mándelo a <b>${esc(C.email.toLowerCase())}</b> o al <b>${esc(C.telefono)}</b>.</div>`;
+    per.insertBefore(panel,per.querySelector(':scope > .row').nextSibling);
+    const ta=panel.querySelector('textarea');
+    const upd=()=>{panel.querySelector('[data-wa]').href='https://wa.me/'+wa+'?text='+encodeURIComponent(ta.value);
+      panel.querySelector('[data-mail]').href='mailto:'+C.email.toLowerCase()+'?subject='+encodeURIComponent('Corrección árbol Pezuk – '+ref)+'&body='+encodeURIComponent(ta.value);};
+    upd(); ta.addEventListener('input',upd);
+    panel.querySelector('[data-close]').onclick=()=>panel.remove();
+    panel.querySelector('[data-copy]').onclick=()=>{
+      const done=()=>toast('Texto copiado');
+      const fallback=()=>{ta.focus();ta.select();try{document.execCommand('copy');done();}catch(e){toast('Seleccione el texto y cópielo');}};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(done,fallback);}else fallback();
+    };
+    ta.focus(); ta.setSelectionRange(ta.value.length,ta.value.length);
+  });
+})();
+</script>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="440" viewBox="0 0 800 440" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect x="0.5" y="0.5" width="799" height="439" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+  <!-- barra del navegador -->
+  <path d="M0.5 10.5a10 10 0 0 1 10-10h779a10 10 0 0 1 10 10V40.5H0.5z" fill="#f6f8fa"/>
+  <line x1="0" y1="40.5" x2="800" y2="40.5" stroke="#d0d7de"/>
+  <circle cx="22" cy="20" r="6" fill="#ff5f57"/><circle cx="42" cy="20" r="6" fill="#febc2e"/><circle cx="62" cy="20" r="6" fill="#28c840"/>
+  <rect x="90" y="9" width="420" height="22" rx="11" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="106" y="25" font-size="13" fill="#59636e">github.com/emadel1990/arbol-pezuk</text>
+  <!-- encabezado del repositorio -->
+  <text x="24" y="76" font-size="18" fill="#0969da">emadel1990 <tspan fill="#59636e">/</tspan> <tspan font-weight="600">arbol-pezuk</tspan></text>
+  <text x="24" y="112" font-size="14" fill="#1f2328" font-weight="600">&lt;&gt; Code</text>
+  <rect x="20" y="120" width="72" height="3" rx="1.5" fill="#fd8c73"/>
+  <text x="116" y="112" font-size="14" fill="#59636e">Issues</text>
+  <text x="182" y="112" font-size="14" fill="#59636e">Pull requests</text>
+  <text x="296" y="112" font-size="14" fill="#59636e">Actions</text>
+  <text x="364" y="112" font-size="14" fill="#59636e">Settings</text>
+  <line x1="0" y1="124.5" x2="800" y2="124.5" stroke="#d0d7de"/>
+  <!-- lista de archivos -->
+  <rect x="24.5" y="140.5" width="560" height="282" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <path d="M24.5 146.5a6 6 0 0 1 6-6h548a6 6 0 0 1 6 6V174.5H24.5z" fill="#f6f8fa"/>
+  <line x1="24" y1="174.5" x2="585" y2="174.5" stroke="#d0d7de"/>
+  <text x="40" y="162" font-size="13" fill="#1f2328" font-weight="600">emadel1990 <tspan font-weight="400" fill="#59636e">Árbol genealógico Pezuk</tspan></text>
+  <g font-size="14" fill="#1f2328">
+    <g transform="translate(0,175)"><rect x="40" y="10" width="14" height="11" rx="2" fill="#54aeff"/><text x="64" y="21">scripts</text><line x1="25" y1="30.5" x2="584" y2="30.5" stroke="#d8dee4"/></g>
+    <g transform="translate(0,206)"><rect x="41.5" y="8.5" width="11" height="14" rx="1.5" fill="none" stroke="#59636e"/><text x="64" y="21">.gitignore</text><line x1="25" y1="30.5" x2="584" y2="30.5" stroke="#d8dee4"/></g>
+    <g transform="translate(0,237)"><rect x="41.5" y="8.5" width="11" height="14" rx="1.5" fill="none" stroke="#59636e"/><text x="64" y="21">LICENSE</text><line x1="25" y1="30.5" x2="584" y2="30.5" stroke="#d8dee4"/></g>
+    <g transform="translate(0,268)"><rect x="41.5" y="8.5" width="11" height="14" rx="1.5" fill="none" stroke="#59636e"/><text x="64" y="21">README.md</text><line x1="25" y1="30.5" x2="584" y2="30.5" stroke="#d8dee4"/></g>
+    <g transform="translate(0,299)"><rect x="41.5" y="8.5" width="11" height="14" rx="1.5" fill="none" stroke="#59636e"/><text x="64" y="21">app.js</text><line x1="25" y1="30.5" x2="584" y2="30.5" stroke="#d8dee4"/></g>
+    <g transform="translate(0,330)"><rect x="25" y="1" width="559" height="29" fill="#fff8c5"/><rect x="41.5" y="8.5" width="11" height="14" rx="1.5" fill="none" stroke="#59636e"/><text x="64" y="21" fill="#0969da" font-weight="600" text-decoration="underline">datos.js</text><line x1="25" y1="30.5" x2="584" y2="30.5" stroke="#d8dee4"/></g>
+    <g transform="translate(0,361)"><rect x="41.5" y="8.5" width="11" height="14" rx="1.5" fill="none" stroke="#59636e"/><text x="64" y="21">estilos.css</text><line x1="25" y1="30.5" x2="584" y2="30.5" stroke="#d8dee4"/></g>
+    <g transform="translate(0,392)"><rect x="41.5" y="8.5" width="11" height="14" rx="1.5" fill="none" stroke="#59636e"/><text x="64" y="21">index.html</text></g>
+  </g>
+  <!-- marca -->
+  <rect x="30" y="333" width="140" height="26" rx="6" fill="none" stroke="#cf222e" stroke-width="3"/>
+  <line x1="172" y1="346" x2="600" y2="346" stroke="#cf222e" stroke-width="3"/>
+  <circle cx="616" cy="346" r="16" fill="#cf222e"/><text x="616" y="352" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">1</text>
+  <text x="640" y="342" font-size="15" font-weight="700" fill="#cf222e">Hacé clic en</text>
+  <text x="640" y="362" font-size="15" font-weight="700" fill="#cf222e">datos.js</text>
+</svg>

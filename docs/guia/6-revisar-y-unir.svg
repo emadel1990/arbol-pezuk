@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="430" viewBox="0 0 800 430" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect x="0.5" y="0.5" width="799" height="429" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="24" y="46" font-size="22" fill="#1f2328">Agrego fecha de nacimiento de Mauricio (3.1.5.3) <tspan fill="#59636e">#1</tspan></text>
+  <rect x="24" y="62" width="64" height="26" rx="13" fill="#1f883d"/>
+  <text x="56" y="80" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Open</text>
+  <text x="100" y="80" font-size="13" fill="#59636e">colaborador wants to merge 1 commit into <tspan font-family="ui-monospace, Menlo, monospace" fill="#0969da">main</tspan></text>
+  <!-- pestañas -->
+  <text x="28" y="122" font-size="14" font-weight="600" fill="#1f2328">Conversation</text>
+  <rect x="22" y="130" width="100" height="3" rx="1.5" fill="#fd8c73"/>
+  <text x="146" y="122" font-size="14" fill="#59636e">Commits</text>
+  <text x="228" y="122" font-size="14" fill="#59636e">Files changed</text>
+  <line x1="0" y1="134.5" x2="800" y2="134.5" stroke="#d0d7de"/>
+  <!-- vista previa del cambio -->
+  <rect x="24.5" y="152.5" width="560" height="88" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12">
+    <rect x="25" y="166" width="559" height="26" fill="#ffebe9"/>
+    <text x="36" y="183" fill="#82071e">- { "codigo": "3.1.5.3", "nombre": "Mauricio" }</text>
+    <rect x="25" y="196" width="559" height="26" fill="#dafbe1"/>
+    <text x="36" y="213" fill="#116329">+ { "codigo": "3.1.5.3", "nombre": "Mauricio", "nacio": "12/04/1990" }</text>
+  </g>
+  <!-- caja de unir -->
+  <rect x="24.5" y="262.5" width="560" height="140" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <circle cx="52" cy="292" r="12" fill="#1f883d"/>
+  <path d="M46 292l4 4 8-8" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="74" y="290" font-size="14" font-weight="600" fill="#1f2328">This branch has no conflicts with the base branch</text>
+  <text x="74" y="308" font-size="12" fill="#59636e">Merging can be performed automatically.</text>
+  <line x1="25" y1="324.5" x2="584" y2="324.5" stroke="#d0d7de"/>
+  <rect x="40.5" y="342.5" width="170" height="34" rx="6" fill="#1f883d" stroke="#1a7f37"/>
+  <text x="125" y="364" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Merge pull request  ▾</text>
+  <!-- marcas -->
+  <rect x="220" y="104" width="114" height="26" rx="6" fill="none" stroke="#cf222e" stroke-width="3"/>
+  <circle cx="356" cy="117" r="16" fill="#cf222e"/><text x="356" y="123" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">10</text>
+  <text x="380" y="113" font-size="14" font-weight="700" fill="#cf222e">Opcional: mirá el cambio</text>
+  <text x="380" y="131" font-size="13" fill="#1f2328">rojo = lo que estaba, verde = lo nuevo</text>
+  <rect x="35" y="337" width="181" height="45" rx="9" fill="none" stroke="#cf222e" stroke-width="3"/>
+  <circle cx="240" cy="360" r="16" fill="#cf222e"/><text x="240" y="366" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">11</text>
+  <text x="264" y="356" font-size="14" font-weight="700" fill="#cf222e">Tocá "Merge pull request"</text>
+  <text x="264" y="374" font-size="13" fill="#1f2328">(unir el cambio al árbol)</text>
+</svg>

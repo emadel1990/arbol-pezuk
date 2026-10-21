@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="330" viewBox="0 0 800 330" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect x="0.5" y="0.5" width="799" height="329" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+  <!-- confirmar -->
+  <text x="24" y="36" font-size="13" font-weight="600" fill="#59636e">PRIMERO</text>
+  <rect x="24.5" y="48.5" width="560" height="110" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <rect x="40.5" y="62.5" width="528" height="30" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <text x="52" y="82" font-size="13" fill="#1f2328">Merge pull request #1 from colaborador-patch-1</text>
+  <rect x="40.5" y="108.5" width="124" height="34" rx="6" fill="#1f883d" stroke="#1a7f37"/>
+  <text x="102" y="130" font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">Confirm merge</text>
+  <rect x="35" y="103" width="135" height="45" rx="9" fill="none" stroke="#cf222e" stroke-width="3"/>
+  <circle cx="616" cy="125" r="16" fill="#cf222e"/><text x="616" y="131" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">12</text>
+  <line x1="172" y1="125" x2="598" y2="125" stroke="#cf222e" stroke-width="3" stroke-dasharray="6 5"/>
+  <text x="640" y="120" font-size="14" font-weight="700" fill="#cf222e">Tocá "Confirm</text>
+  <text x="640" y="138" font-size="14" font-weight="700" fill="#cf222e">merge"</text>
+  <!-- listo -->
+  <text x="24" y="196" font-size="13" font-weight="600" fill="#59636e">Y LISTO</text>
+  <rect x="24.5" y="208.5" width="560" height="96" rx="6" fill="#ffffff" stroke="#d0d7de"/>
+  <circle cx="54" cy="240" r="13" fill="#8250df"/>
+  <circle cx="50" cy="234" r="2.2" fill="#ffffff"/><circle cx="50" cy="247" r="2.2" fill="#ffffff"/><circle cx="59" cy="241" r="2.2" fill="#ffffff"/>
+  <path d="M50 236v9M51 235q8 0 8 4" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+  <text x="78" y="238" font-size="14" font-weight="600" fill="#1f2328">Pull request successfully merged and closed</text>
+  <text x="78" y="256" font-size="12" fill="#59636e">You're all set — the branch can be safely deleted.</text>
+  <rect x="440.5" y="266.5" width="126" height="30" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="503" y="286" font-size="13" fill="#1f2328" text-anchor="middle">Delete branch</text>
+  <rect x="435" y="261" width="137" height="41" rx="9" fill="none" stroke="#cf222e" stroke-width="3" stroke-dasharray="6 4"/>
+  <circle cx="616" cy="282" r="16" fill="#cf222e"/><text x="616" y="288" font-size="17" font-weight="700" fill="#ffffff" text-anchor="middle">13</text>
+  <text x="640" y="277" font-size="14" font-weight="700" fill="#cf222e">Opcional:</text>
+  <text x="640" y="295" font-size="13" fill="#1f2328">"Delete branch" limpia</text>
+  <text x="640" y="312" font-size="13" fill="#1f2328">la copia temporal</text>
+</svg>
