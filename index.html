@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Árbol Genealógico Pezuk</title>
+<meta name="description" content="Árbol genealógico de la familia Pezuk, descendientes de Miguel Pezuk y Maria Zsavaga. Letra grande, búsqueda por nombre y botón para enviar correcciones.">
+<meta property="og:title" content="Árbol Genealógico Pezuk">
+<meta property="og:description" content="Descendientes de Miguel Pezuk y Maria Zsavaga. Busque a su familia y envíe correcciones.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#1E4D8B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='24' r='20' fill='%231E4D8B'/%3E%3Crect x='28' y='38' width='8' height='22' rx='2' fill='%231E4D8B'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <h1>Árbol Genealógico Pezuk <small>Descendientes de Miguel Pezuk y Maria Zsavaga · Última versión: <span id="ver"></span></small></h1>
+    <div class="sizer" role="group" aria-label="Tamaño de letra">
+      <button type="button" id="smaller" class="small" aria-label="Letra más chica" title="Letra más chica">A−</button>
+      <button type="button" id="bigger" class="big" aria-label="Letra más grande" title="Letra más grande">A+</button>
+    </div>
+    <div class="search">
+      <input type="search" id="q" placeholder="Buscar una persona por nombre…" autocomplete="off" aria-label="Buscar una persona">
+      <div class="results" id="results" hidden></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section class="card howto">
+  <h2>Cómo usar este árbol</h2>
+  <ol>
+    <li><b>Para agrandar la letra</b>, toque el botón <b>A+</b> de arriba las veces que necesite.</li>
+    <li><b>Para buscar a alguien</b>, escriba su nombre en el cuadro de búsqueda y toque el resultado.</li>
+    <li><b>Para ver una rama</b>, toque el recuadro de uno de los 12 hijos de Miguel y Maria. Se abre la lista completa de esa familia.</li>
+    <li>Cada persona tiene un <b>código</b>, por ejemplo <span class="k">3.1.5.3</span>: Mauricio, hijo de Ruben (3.1.5), nieto de Juan (3.1), bisnieto de Matias (3), tataranieto de Miguel.</li>
+    <li><b>Si falta algún dato o hay un error</b>, toque el botón <b>Corregir</b> al lado de la persona y mande el mensaje a Mauricio.</li>
+  </ol>
+  <div class="actions">
+    <button type="button" class="btn" id="openall">Abrir todas las ramas</button>
+    <button type="button" class="btn ghost" id="closeall">Cerrar todas las ramas</button>
+  </div>
+</section>
+
+<section class="card" id="fundadores">
+  <h2>Los que llegaron: Miguel y Maria</h2>
+  <div class="founders" id="founders"></div>
+  <div class="story" id="story"></div>
+</section>
+
+<section>
+  <h2 style="font-size:1.3rem;margin-top:.4rem">Las 12 ramas: los hijos de Miguel y Maria</h2>
+  <p style="color:var(--muted);margin:.3rem 0 0;font-size:.9rem">Toque un nombre para ir a esa rama.</p>
+  <div class="index" id="index"></div>
+</section>
+
+<section id="ramas"></section>
+
+<section class="card contactbox" id="contacto">
+  <h2>Para corregir o agregar datos</h2>
+  <p>Este árbol lo mantiene <b>Mauricio Pezuk</b>. Indique siempre el <b>código</b> o el nombre de la persona y la rama.</p>
+  <p>Correo: <span class="big" id="mail"></span></p>
+  <p>Teléfono / WhatsApp: <span class="big" id="tel"></span></p>
+  <div class="actions">
+    <a class="btn" id="walink" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+    <a class="btn ghost" id="maillink">Escribir por correo</a>
+  </div>
+</section>
+
+<footer>Este enlace muestra siempre la última versión del árbol. Si alguien le reenvió una copia vieja en PDF, use este enlace.</footer>
+</div>
+
+<script src="datos.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
