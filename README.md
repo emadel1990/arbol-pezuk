@@ -16,8 +16,8 @@ Esta guía es para quien ayuda a mantener el árbol al día. No hace falta insta
 Vas a hacer tres cosas:
 
 1. **Editar** el archivo `datos.js`, que es donde están todas las personas del árbol.
-2. **Proponer** el cambio. GitHub lo guarda aparte, como un borrador, y lo llama *pull request*.
-3. **Unir** ese borrador al árbol (*merge*). Recién ahí el cambio aparece en la página.
+2. **Proponer** el cambio. GitHub lo guarda aparte, como un borrador, y lo llama _pull request_.
+3. **Unir** ese borrador al árbol (_merge_). Recién ahí el cambio aparece en la página.
 
 Hacerlo en dos pasos sirve para revisar el cambio antes de que lo vea toda la familia, y si algo sale mal se puede volver atrás.
 
@@ -41,10 +41,13 @@ Arriba a la derecha del archivo hay un **lápiz** (si pasás el mouse dice "Edit
 - **(4)** Hacé el cambio. Por ejemplo, para agregar la fecha de nacimiento de Mauricio:
 
   Antes:
+
   ```js
   { "codigo": "3.1.5.3", "nombre": "Mauricio" }
   ```
+
   Después:
+
   ```js
   { "codigo": "3.1.5.3", "nombre": "Mauricio", "nacio": "12/04/1990" }
   ```
@@ -66,7 +69,7 @@ Se abre una ventanita:
 
 ![Ventana Commit changes con el mensaje, la opción de nueva rama y el botón Propose changes marcados](docs/guia/4-proponer.svg)
 
-- **(6)** En **"Commit message"** escribí en pocas palabras qué cambiaste. Por ejemplo: *Agrego fecha de nacimiento de Mauricio (3.1.5.3)*.
+- **(6)** En **"Commit message"** escribí en pocas palabras qué cambiaste. Por ejemplo: _Agrego fecha de nacimiento de Mauricio (3.1.5.3)_.
 - **(7)** Elegí la segunda opción: **"Create a new branch for this commit and start a pull request"**. El nombre que aparece abajo (algo como `tu-usuario-patch-1`) dejalo como está.
 - **(8)** Tocá **"Propose changes"**.
 
@@ -111,13 +114,13 @@ Es un sitio estático simple. No hay paso de compilación, ni framework, ni depe
 
 ## Archivos
 
-| Archivo | Qué es |
-| --- | --- |
-| `datos.js` | **Todos los datos de la familia.** Es el único archivo que tenés que editar para cambiar personas. |
-| `index.html` | Estructura de la página y textos fijos (instrucciones, títulos, pie de página). |
-| `estilos.css` | Aspecto visual y diseño para imprimir. |
-| `app.js` | Dibujado del árbol, búsqueda, tamaño de letra y el botón "Corregir". |
-| `scripts/validar.mjs` | Revisa `datos.js` para encontrar errores antes de publicar. |
+| Archivo               | Qué es                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------- |
+| `datos.js`            | **Todos los datos de la familia.** Es el único archivo que tenés que editar para cambiar personas. |
+| `index.html`          | Estructura de la página y textos fijos (instrucciones, títulos, pie de página).                    |
+| `estilos.css`         | Aspecto visual y diseño para imprimir.                                                             |
+| `app.js`              | Dibujado del árbol, búsqueda, tamaño de letra y el botón "Corregir".                               |
+| `scripts/validar.mjs` | Revisa `datos.js` para encontrar errores antes de publicar.                                        |
 
 ## Cómo editar los datos de la familia
 
@@ -129,15 +132,15 @@ Abrí `datos.js`. Cada persona se ve así, y solo `nombre` es obligatorio:
   "hijos": [ /* hijos, con la misma forma */ ] }
 ```
 
-| Campo | Significado |
-| --- | --- |
-| `codigo` | El código familiar. El código de un hijo empieza con el código del padre o la madre: los hijos de `3.1.5` son `3.1.5.1`, `3.1.5.2`, y así. |
-| `nombre` | Nombre del descendiente. |
-| `pareja` | Esposo, esposa o pareja. Usá `"? (nombre desconocido)"` cuando no se sabe. |
-| `nacio` / `fallecio` | Fechas de nacimiento y fallecimiento como texto libre, por ejemplo `"1904"` o `"23/07/2013"`. |
-| `pareja_nacio` / `pareja_fallecio` | Las fechas de la pareja. |
-| `notas` | Una nota que aparece debajo del nombre. Puede ser un texto o una lista de textos. |
-| `hijos` | Una lista de hijos. Si no tiene, no lo pongas. |
+| Campo                              | Significado                                                                                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `codigo`                           | El código familiar. El código de un hijo empieza con el código del padre o la madre: los hijos de `3.1.5` son `3.1.5.1`, `3.1.5.2`, y así. |
+| `nombre`                           | Nombre del descendiente.                                                                                                                   |
+| `pareja`                           | Esposo, esposa o pareja. Usá `"? (nombre desconocido)"` cuando no se sabe.                                                                 |
+| `nacio` / `fallecio`               | Fechas de nacimiento y fallecimiento como texto libre, por ejemplo `"1904"` o `"23/07/2013"`.                                              |
+| `pareja_nacio` / `pareja_fallecio` | Las fechas de la pareja.                                                                                                                   |
+| `notas`                            | Una nota que aparece debajo del nombre. Puede ser un texto o una lista de textos.                                                          |
+| `hijos`                            | Una lista de hijos. Si no tiene, no lo pongas.                                                                                             |
 
 Algunas ediciones comunes:
 
@@ -177,7 +180,7 @@ Mantené siempre la misma dirección. La idea es que los parientes tengan un sol
 
 ## Cómo imprimir
 
-La página tiene un diseño para imprimir. Abrí `https://<tu-dominio>/#imprimir` para desplegar todas las ramas, y después imprimí o guardá como PDF desde el navegador.
+La página tiene un diseño para imprimir. Abrí `https://emadel1990.github.io/arbol-pezuk/#imprimir` para desplegar todas las ramas, y después imprimí o guardá como PDF desde el navegador.
 
 ## Quién puede editar
 
